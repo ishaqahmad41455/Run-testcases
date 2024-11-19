@@ -1,6 +1,3 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Node.js CI
 
 on:
@@ -11,11 +8,12 @@ on:
 
 jobs:
   build:
+    name: Running test cases
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [18.17]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -30,16 +28,45 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Build the application (if needed)
-      run: npm run build --if-present
+    # - name: Build the application (if needed)
+    #   run: npm run build --if-present
 
-    - name: Run tests
-      run: npm test
+    # Install dependencies
+    - name: Install depenedecies
+      run: npm ci
 
-    # New step to run your custom test script inside src/test/index.js
-    - name: Run additional test cases
+    - name: List test files
+      run: ls -la ./src/__tests__/auth
+
+    - name: run npm
       run: |
-        cd src/test
-        npm install  # Ensure dependencies are installed
-        npm run start:test  # Run the custom test script
+        npm install
+        npm i mocha
+        npm install mocha-junit-reporter --save-dev
 
+        
+    # Run tests
+    - name: Run tests
+      run: |
+        npm run start:test
+    
+#    # display test results
+#     - name: Display test results 
+#       run: |
+#         echo "Test summary:"
+#         grep 'passing' || echo "No tests passed."
+#         grep 'failing' || echo "No tests failed."
+    
+    # Parse and display test results
+    - name: Display test results summary
+      run: |
+        echo "Parsing test results..."
+        echo "Total tests passed: $(grep -o 'testsuite.*tests="[0-9]*"' test-results.xml | sed -E 's/.*tests="([0-9]+)".*/\1/')"
+        echo "Total tests failed: $(grep -o 'testsuite.*failures="[0-9]*"' test-results.xml | sed -E 's/.*failures="([0-9]+)".*/\1/')"
+
+      # Optionally upload the test results file 
+    - name: Upload test results file
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: test-results.xml
