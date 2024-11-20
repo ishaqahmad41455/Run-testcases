@@ -2,7 +2,7 @@
 import { expect } from "chai";
 import request from "supertest";
 
-const API_URL = "https://devapi.stable-life.com/api/v1/auth";
+const API_URL = "https://yourdomain.com-life.com/api/v1/auth";
 
 describe("Login API", () => {
     it("Should fail if Email is invalid", (done) => {
@@ -31,7 +31,7 @@ describe("Login API", () => {
                 "User-Agent": "PostmanRuntime/7.37.0",
                 "x-temp-id": "1212",
             })
-            .send({ email: "munsif@mailinator.com", password: "invalid_passowrd" })
+            .send({ email: "ishaq@mailinator.com", password: "invalid_passowrd" })
             .expect(400)
             .end((error, response) => {
                 if (error) return done(error);
@@ -50,7 +50,7 @@ describe("Login API", () => {
     //             "User-Agent": "PostmanRuntime/7.37.0",
     //             "x-temp-id": "1212",
     //         })
-    //         .send({ email: "munsif1234567890@mailinator.com", password: "Testing@123" })
+    //         .send({ email: "ishaqahmadcl@mailinator.com", password: "Testing@123" })
     //         .expect(200)
     //         .end((err, response) => {
     //             if (err) return done(err);
