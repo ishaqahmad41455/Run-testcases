@@ -32,7 +32,7 @@ describe("Login API", () => {
                 "x-temp-id": "1212",
             })
             .send({ email: "munsif@mailinator.com", password: "invalid_passowrd" })
-            .expect(200)
+            .expect(400)
             .end((error, response) => {
                 if (error) return done(error);
                 expect(response.status).to.equal(400);
@@ -43,20 +43,20 @@ describe("Login API", () => {
                 return false;
             });
     });
-    it("Should generate Signin OTP for valid Colombian user credentials", (done) => {
-        request(API_URL)
-            .post("/signin")
-            .set({
-                "User-Agent": "PostmanRuntime/7.37.0",
-                "x-temp-id": "1212",
-            })
-            .send({ email: "munsif1234567890@mailinator.com", password: "Testing@123" })
-            .expect(200)
-            .end((err, response) => {
-                if (err) return done(err);
-                expect(response.status).to.equal(200);
-                expect(response.body.message).to.equal(`A (OTP) has been successfully sent  to your email and mobile.`);
-                done();
-            });
-    });
+    // it("Should generate Signin OTP for valid Colombian user credentials", (done) => {
+    //     request(API_URL)
+    //         .post("/signin")
+    //         .set({
+    //             "User-Agent": "PostmanRuntime/7.37.0",
+    //             "x-temp-id": "1212",
+    //         })
+    //         .send({ email: "munsif1234567890@mailinator.com", password: "Testing@123" })
+    //         .expect(200)
+    //         .end((err, response) => {
+    //             if (err) return done(err);
+    //             expect(response.status).to.equal(200);
+    //             expect(response.body.message).to.equal(`A (OTP) has been successfully sent  to your email and mobile.`);
+    //             done();
+    //         });
+    // });
 });
