@@ -1,0 +1,70 @@
+name: Node.js CI
+
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Running test cases
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.12]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Install Mocha reporter dependencies
+      run: |
+        npm install mocha mochawesome mochawesome-report-generator mocha-junit-reporter mocha-multi-reporters mochawesome-merge --save-dev
+
+    - name: List files before running tests
+      run: |
+        echo "Listing files in the current directory"
+        ls -la
+
+    - name: List test files
+      run: ls -la ./src/__tests__/auth
+
+    - name: Run npm tests and generate reports
+      run: npm run start:test
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          test-results/**/*.xml
+    
+  # Fail the pipeline if any tests failed (Mocha already exits with non-zero code)
+    - name: Fail the pipeline if tests failed
+      if: failure()  # This will ensure the pipeline stops immediately when any test fails
+      run: |
+        echo "Tests failed, stopping pipeline execution"
+        exit 1
+
+    # Block triggering dependent pipeline if tests fail
+    - name: Block dependent pipeline trigger
+      if: failure()  # Prevent triggering the dependent pipeline when tests fail
+      run: |
+        echo "Blocking dependent pipeline trigger because tests failed"
+        exit 1
