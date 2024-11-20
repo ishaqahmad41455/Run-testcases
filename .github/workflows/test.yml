@@ -1,0 +1,30 @@
+name: Dependent Pipeline (Console Log)
+
+on:
+  workflow_run:
+    workflows: ["Node.js CI"]   # The name of the first pipeline (Pipeline A)
+    types:
+      - completed 
+
+jobs:
+  log:
+    name: Generate Console Log
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v4
+
+    - name: Check if Pipeline A was successful
+      run: |
+        if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
+          echo "Pipeline A failed, aborting dependent pipeline."
+          exit 1
+        fi
+
+    - name: Print Success Log
+      run: |
+        echo "Pipeline A completed successfully!"
+        echo "Now running dependent actions..."
+        # You can add any additional commands here
+        echo "This is a console.log from the dependent pipeline"
