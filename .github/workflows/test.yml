@@ -21,50 +21,6 @@ jobs:
         fi
         echo "Pipeline A completed successfully!"
 
-    - name: Download test results  
-      uses: actions/download-artifact@v3
-      with:
-        name: mochawesome-xml-report  
-        path: ./downloaded-artifacts
-    
-    - name: Install jq
-      run: sudo apt-get install jq
-
-
-    - name: Fetch Artifact from GitHub API (if needed)
-      run: |
-        # Optional step if the artifact isn't found via download
-        ARTIFACT_ID=$(curl -s \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/${{ github.repository }}/actions/artifacts | \
-          jq -r '.artifacts[] | select(.name == "mochawesome-xml-report") | .id')
-        
-        if [ -z "$ARTIFACT_ID" ]; then
-          echo "Artifact mochawesome-xml-report not found, skipping API fetch."
-        else
-          echo "Fetching artifact mochawesome-xml-report from GitHub API..."
-          curl -L \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -o mochawesome-xml-report.zip \
-            https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip
-        fi
-
-    - name: Unzip Test Results
-      run: |
-        if [ -f mochawesome-xml-report.zip ]; then
-          echo "Unzipping mochawesome-xml-report.zip..."
-          unzip mochawesome-xml-report.zip -d ./downloaded-artifacts
-        else
-          echo "No zip file found, skipping unzipping."
-        fi
-
-    - name: List downloaded files
-      run: |
-        echo "Listing files in ./downloaded-artifacts"
-        ls -la ./downloaded-artifacts
-
     - name: Check Integration Test Flag
       run: |
         if [[ "${{ github.event.client_payload.integration }}" == "true" ]]; then
