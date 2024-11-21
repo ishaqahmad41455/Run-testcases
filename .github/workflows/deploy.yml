@@ -21,6 +21,9 @@ jobs:
     strategy:
       matrix:
         node-version: [16.12]
+    
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
     steps:
     - uses: actions/checkout@v4
@@ -74,7 +77,7 @@ jobs:
       if: success()  # Only trigger if the tests pass
       run: |
         curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: Bearer  $GH_TOKEN" \
           -H "Accept: application/vnd.github.everest-preview+json" \
           -d '{"event_type": "trigger-dependent-pipelines"}' \
           https://api.github.com/repos/ishaqahmad41455/Run-testcases/dispatches
