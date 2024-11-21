@@ -2,7 +2,7 @@
 import { expect } from "chai";
 import request from "supertest";
 
-const API_URL = "https://devapi.stable-life.com/api/v1/auth";
+const API_URL = "https://yourdomain.com/api/v1/auth";
 
 describe("Login API", () => {
     it("Should fail if Email is invalid", (done) => {
