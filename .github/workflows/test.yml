@@ -3,6 +3,7 @@ name: Dependent Pipeline (Console Log)
 on:
   repository_dispatch:
     types: [trigger-dependent-pipeline]
+
 jobs:
   log:
     name: Generate Console Log
@@ -18,10 +19,25 @@ jobs:
           echo "Pipeline A failed, aborting dependent pipeline."
           exit 1
         fi
+        echo "Pipeline A completed successfully!"
+
+    - name: Check Integration Test Flag
+      run: |
+        if [[ "${{ github.event.client_payload.integration }}" == "true" ]]; then
+          echo "Running integration tests because 'integration' flag is set."
+        else
+          echo "Skipping integration tests."
+        fi
+
+    - name: Check Unit Test Flag
+      run: |
+        if [[ "${{ github.event.client_payload.unit }}" == "true" ]]; then
+          echo "Running unit tests because 'unit' flag is set."
+        else
+          echo "Skipping unit tests."
+        fi
 
     - name: Print Success Log
       run: |
-        echo "Pipeline A completed successfully!"
         echo "Now running dependent actions..."
-        # You can add any additional commands here
-        echo "This is a console.log from the dependent pipeline"
+        echo "This is a console.log from the dependent pipeline."
