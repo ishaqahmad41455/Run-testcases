@@ -6,6 +6,7 @@ permissions:
   issues: read
   checks: write
   pull-requests: write
+  workflows: write
 
 on:
   push:
@@ -77,7 +78,7 @@ jobs:
       if: success()  # Only trigger if the tests pass
       run: |
         curl -X POST \
-          -H "Authorization: Bearer  $GH_TOKEN" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.everest-preview+json" \
           -d '{"event_type": "trigger-dependent-pipelines"}' \
           https://api.github.com/repos/ishaqahmad41455/Run-testcases/dispatches
