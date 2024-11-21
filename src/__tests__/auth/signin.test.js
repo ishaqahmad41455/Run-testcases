@@ -13,7 +13,7 @@ describe("Login API", () => {
                 "x-temp-id": "1212",
             })
             .send({ email: "thisemaildoestexists@mailinator.com", password: "password" })
-            .expect(400)
+            .expect(200)
             .end((error, response) => {
                 if (error) return done(error);
                 expect(response.status).to.equal(400);
