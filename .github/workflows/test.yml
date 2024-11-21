@@ -21,6 +21,12 @@ jobs:
         fi
         echo "Pipeline A completed successfully!"
 
+    - name: Download test results  
+      uses: actions/download-artifact@v3
+      with:
+        name: mochawesome-xml-report  
+        path: test-results/**/*.xml
+
     - name: Check Integration Test Flag
       run: |
         if [[ "${{ github.event.client_payload.integration }}" == "true" ]]; then
