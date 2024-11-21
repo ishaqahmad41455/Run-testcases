@@ -25,7 +25,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: mochawesome-xml-report  
-        path: test-results/**/*.xml
+        path: ./downloaded-artifacts
 
     - name: Check Integration Test Flag
       run: |
