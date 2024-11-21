@@ -68,3 +68,11 @@ jobs:
       run: |
         echo "Blocking dependent pipeline trigger because tests failed"
         exit 1
+
+    - name: Dependent Pipeline (Console Log)
+      if: success()  # Only trigger if the tests pass
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -d '{"event_type": "trigger-dependent-pipelines"}' \
+          https://api.github.com/repos/ishaqahmad41455/Run-testcases/dispatches

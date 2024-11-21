@@ -1,11 +1,8 @@
 name: Dependent Pipeline (Console Log)
 
 on:
-  workflow_run:
-    workflows: ["Node.js CI"]   # The name of the first pipeline (Pipeline A)
-    types:
-      - completed 
-
+  repository_dispatch:
+    types: [trigger-dependent-pipeline]
 jobs:
   log:
     name: Generate Console Log
@@ -17,7 +14,7 @@ jobs:
 
     - name: Check if Pipeline A was successful
       run: |
-        if [[ "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
+        if [[ "${{ github.event.client_payload.pipelineA_status }}" != "success" ]]; then
           echo "Pipeline A failed, aborting dependent pipeline."
           exit 1
         fi
