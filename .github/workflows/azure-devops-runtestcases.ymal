@@ -1,1 +1,55 @@
+trigger:
+  - feature/1947/ghulam.abbas/missions-fixes
+
+variables:
+  nodeVersion: 18.12  
+  testPath: 'src/__tests__/controllers'
+  jestConfig: 'jest.config.ts' 
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+- job: Test_Campaigns
+  displayName: 'Run Campaign Controller Tests'
+  
+  steps:
+  - checkout: self
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(nodeVersion)
+    displayName: 'Install Node.js'
+
+  # Install required dependencies
+  - script: npm install jest ts-jest jest-junit jest-html-reporter @types/jest typescript --save-dev
+    displayName: 'Install Jest and Reporting Dependencies'
+
+  # Install project dependencies
+  - script: npm install
+    displayName: 'Install Project Dependencies'
+
+  # Run Jest tests
+  - script: npx jest $(testPath) --config $(jestConfig)
+    displayName: 'Run Campaign Controller Tests'
+    condition: succeeded()
+    # continueOnError: true
+    env:
+      NODE_ENV: test
+
+  # Publish test results
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: 'test-results/test-results.xml'
+      testRunTitle: 'Campaign Tests'
+      testResultsFormat: 'JUnit'
+    condition: always()
+
+  # Publish HTML report as build artifact (with graphs and charts)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: './test-results/test-report.html'  
+      artifactName: 'TestReport'
+      publishLocation: 'Container'
+    condition: always()
 
